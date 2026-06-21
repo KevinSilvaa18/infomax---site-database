@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infomax Enterprise | Sistema de Gestão</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #09090b;
+            color: #e4e4e7;
+        }
+
+        .glass {
+            background: rgba(24, 24, 27, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(63, 63, 70, 0.4);
+        }
+
+        .nav-active {
+            border-left: 4px solid #ffbb00;
+            background: rgba(255, 187, 0, 0.05);
+            color: #ffbb00 !important;
+        }
+
+        .modal {
+            display: none;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+    </style>
+    <script>tailwind.config = { darkMode: 'class', theme: { extend: { colors: { brand: { yellow: '#ffbb00', dark: '#09090b' } } } } }</script>
+</head>
+
+<body class="h-screen overflow-hidden">
+
+    <!-- Login Screen -->
+    <div id="login-screen" class="fixed inset-0 z-[100] flex items-center justify-center bg-zinc-950">
+        <div
+            class="glass w-full max-w-sm p-8 rounded-3xl border border-zinc-800 shadow-2xl animate-in fade-in zoom-in duration-300">
+            <div class="text-center mb-8">
+                <div
+                    class="w-16 h-16 bg-brand-yellow rounded-2xl flex items-center justify-center text-zinc-950 text-2xl font-black mx-auto mb-4">
+                    iM</div>
+                <h1 class="text-xl font-bold text-white">Infomax Enterprise</h1>
+                <p class="text-zinc-500 text-xs uppercase tracking-widest font-semibold">Acesso Administrativo</p>
+            </div>
+            <form id="form-login" class="space-y-4">
+                <input type="email" id="login-email" value="admin@infomax.com" disabled
+                    class="w-full bg-zinc-900 border border-zinc-800 rounded-lg p-3 text-sm text-zinc-500">
+                <input type="password" id="login-pass" required
+                    class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-3 outline-none focus:border-brand-yellow"
+                    placeholder="Senha de acesso">
+                <button type="submit"
+                    class="w-full bg-brand-yellow text-zinc-950 font-bold py-3 rounded-lg hover:bg-yellow-500 transition-all shadow-lg">Entrar
+                    no Sistema</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="app-content" class="hidden flex h-screen">
+        <aside class="w-64 border-r border-zinc-800 bg-zinc-950 p-6 flex flex-col">
+            <div class="flex items-center gap-3 mb-10 px-2">
+                <div
+                    class="w-10 h-10 bg-brand-yellow rounded-xl flex items-center justify-center text-zinc-950 font-black">
+                    iM</div>
+                <span class="font-bold text-lg tracking-tight text-white">Infomax OS</span>
+            </div>
+            <nav class="flex-1 space-y-2">
+                <button onclick="renderView('dashboard')" id="nav-dashboard"
+                    class="nav-link w-full flex items-center gap-3 px-4 py-3 text-zinc-400 hover:text-white rounded-xl transition-all"><i
+                        class="fa-solid fa-chart-line"></i> Dashboard</button>
+                <button onclick="renderView('orders')" id="nav-orders"
+                    class="nav-link w-full flex items-center gap-3 px-4 py-3 text-zinc-400 hover:text-white rounded-xl transition-all"><i
+                        class="fa-solid fa-clipboard-list"></i> Ordens de Serviço</button>
+                <button onclick="renderView('clients')" id="nav-clients"
+                    class="nav-link w-full flex items-center gap-3 px-4 py-3 text-zinc-400 hover:text-white rounded-xl transition-all"><i
+                        class="fa-solid fa-users"></i> Clientes</button>
+                <button onclick="renderView('stock')" id="nav-stock"
+                    class="nav-link w-full flex items-center gap-3 px-4 py-3 text-zinc-400 hover:text-white rounded-xl transition-all"><i
+                        class="fa-solid fa-box"></i> Estoque</button>
+                <button onclick="renderView('finance')" id="nav-finance"
+                    class="nav-link w-full flex items-center gap-3 px-4 py-3 text-zinc-400 hover:text-white rounded-xl transition-all"><i
+                        class="fa-solid fa-money-bill-wave"></i> Financeiro</button>
+                <button onclick="renderView('suppliers')" id="nav-suppliers"
+                    class="nav-link w-full flex items-center gap-3 px-4 py-3 text-zinc-400 hover:text-white rounded-xl transition-all"><i
+                        class="fa-solid fa-truck"></i> Fornecedores</button>
+            </nav>
+            <button onclick="logout()"
+                class="w-full mt-2 flex items-center gap-3 px-4 py-3 text-red-500/70 hover:text-red-500 rounded-xl text-sm font-medium transition-all"><i
+                    class="fa-solid fa-right-from-bracket"></i> Sair</button>
+        </aside>
+        <main class="flex-1 overflow-y-auto p-10 bg-zinc-950/30" id="main-view"></main>
+    </div>
+
+    <!-- Modals -->
+    <div id="modal" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-[200]">
+        <div id="modal-content" class="bg-zinc-900 border border-zinc-800 p-8 rounded-2xl w-full max-w-lg"></div>
+    </div>
+
+    <script>
+        let db = JSON.parse(localStorage.getItem('infomax_data')) || { orders: [], clients: [], stock: [], suppliers: [] };
+        function saveDB() { localStorage.setItem('infomax_data', JSON.stringify(db)); }
+
+        document.getElementById('form-login').onsubmit = (e) => {
+            e.preventDefault();
+            if (document.getElementById('login-pass').value === '123456') {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('app-content').classList.remove('hidden');
+                renderView('dashboard');
+            } else { alert('Senha incorreta!'); }
+        };
+
+        function logout() { location.reload(); }
+
+        function closeModal() { document.getElementById('modal').classList.add('hidden'); }
+
+        function renderView(view) {
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('nav-active'));
+            document.getElementById(`nav-${view}`).classList.add('nav-active');
+            const main = document.getElementById('main-view');
+
+            if (view === 'dashboard') {
+                const faturamento = db.orders.reduce((acc, curr) => acc + (parseFloat(curr.valor) || 0), 0);
+                main.innerHTML = `
+                    <h2 class="text-2xl font-bold mb-8">Dashboard Resumo</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div class="glass p-6 rounded-2xl"><p class="text-zinc-500 text-xs uppercase">OS Abertas</p><h3 class="text-3xl font-black mt-2">${db.orders.length}</h3></div>
+                        <div class="glass p-6 rounded-2xl"><p class="text-zinc-500 text-xs uppercase">Faturamento</p><h3 class="text-3xl font-black mt-2 text-brand-yellow">R$ ${faturamento.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</h3></div>
+                    </div>`;
+            } else if (view === 'orders') {
+                main.innerHTML = `
+                    <div class="flex justify-between items-center mb-8">
+                        <h2 class="text-2xl font-bold">Ordens de Serviço</h2>
+                        <button onclick="openModal('order')" class="bg-brand-yellow text-zinc-950 px-4 py-2 rounded-lg font-bold">+ Nova OS</button>
+                    </div>
+                    <div class="glass p-6 rounded-2xl border border-zinc-800">
+                        <table class="w-full text-left">
+                            <thead class="text-zinc-500 text-xs uppercase"><tr><th>OS</th><th>Cliente</th><th>Aparelho</th><th>Valor</th><th>Status</th><th>Ações</th></tr></thead>
+                            <tbody>${db.orders.map((o, idx) => `<tr><td class="py-4 font-mono">#${o.id}</td><td class="py-4">${o.cliente}</td><td class="py-4">${o.aparelho}</td><td class="py-4">R$ ${o.valor}</td><td class="py-4"><span class="bg-zinc-800 px-2 py-1 rounded text-xs">${o.status}</span></td><td class="py-4"><button onclick="deleteItem('orders', ${idx})" class="text-red-500"><i class="fa-solid fa-trash"></i></button></td></tr>`).join('')}</tbody>
+                        </table>
+                    </div>`;
+            } else if (view === 'stock') {
+                main.innerHTML = `
+                    <div class="flex justify-between items-center mb-8">
+                        <h2 class="text-2xl font-bold">Estoque</h2>
+                        <button onclick="openModal('stock')" class="bg-brand-yellow text-zinc-950 px-4 py-2 rounded-lg font-bold">+ Novo Produto</button>
+                    </div>
+                    <div class="glass p-6 rounded-2xl"><table class="w-full text-left"><thead><tr class="text-zinc-500 text-xs uppercase"><th>Produto</th><th>Qtd</th><th>Valor</th></tr></thead><tbody>${db.stock.map((s, idx) => `<tr><td class="py-4">${s.nome}</td><td class="py-4">${s.qtd}</td><td class="py-4">R$ ${s.valor}</td></tr>`).join('')}</tbody></table></div>`;
+            } else if (view === 'clients') {
+                main.innerHTML = `
+                    <div class="flex justify-between items-center mb-8"><h2 class="text-2xl font-bold">Clientes</h2><button onclick="openModal('client')" class="bg-brand-yellow text-zinc-950 px-4 py-2 rounded-lg font-bold">+ Novo Cliente</button></div>
+                    <div class="glass p-6 rounded-2xl">${db.clients.map(c => `<div class="py-2 border-b border-zinc-800">${c.nome} - ${c.telefone}</div>`).join('')}</div>`;
+            } else if (view === 'suppliers') {
+                main.innerHTML = `
+                    <div class="flex justify-between items-center mb-8"><h2 class="text-2xl font-bold">Fornecedores</h2><button onclick="openModal('supplier')" class="bg-brand-yellow text-zinc-950 px-4 py-2 rounded-lg font-bold">+ Novo Fornecedor</button></div>
+                    <div class="glass p-6 rounded-2xl">${db.suppliers.map(s => `<div class="py-2 border-b border-zinc-800">${s.nome}</div>`).join('')}</div>`;
+            }
+        }
+
+        function openModal(type) {
+            const modal = document.getElementById('modal');
+            const content = document.getElementById('modal-content');
+            modal.classList.remove('hidden');
+            if (type === 'order') {
+                content.innerHTML = `<h3 class="text-xl font-bold mb-4">Nova OS</h3><input id="in-cliente" class="w-full p-3 bg-zinc-800 mb-2 rounded" placeholder="Nome Cliente"><input id="in-aparelho" class="w-full p-3 bg-zinc-800 mb-2 rounded" placeholder="Aparelho"><input id="in-valor" class="w-full p-3 bg-zinc-800 mb-4 rounded" placeholder="Valor (0.00)"><button onclick="saveItem('orders')" class="w-full bg-brand-yellow py-3 rounded font-bold text-zinc-950">Salvar</button>`;
+            } else if (type === 'stock') {
+                content.innerHTML = `<h3 class="text-xl font-bold mb-4">Novo Produto</h3><input id="in-nome" class="w-full p-3 bg-zinc-800 mb-2 rounded" placeholder="Nome Produto"><input id="in-qtd" class="w-full p-3 bg-zinc-800 mb-2 rounded" placeholder="Qtd"><input id="in-valor" class="w-full p-3 bg-zinc-800 mb-4 rounded" placeholder="Valor"><button onclick="saveItem('stock')" class="w-full bg-brand-yellow py-3 rounded font-bold text-zinc-950">Salvar</button>`;
+            } else if (type === 'client') {
+                content.innerHTML = `<h3 class="text-xl font-bold mb-4">Novo Cliente</h3><input id="in-nome" class="w-full p-3 bg-zinc-800 mb-2 rounded" placeholder="Nome"><input id="in-tel" class="w-full p-3 bg-zinc-800 mb-4 rounded" placeholder="Telefone"><button onclick="saveItem('clients')" class="w-full bg-brand-yellow py-3 rounded font-bold text-zinc-950">Salvar</button>`;
+            } else if (type === 'supplier') {
+                content.innerHTML = `<h3 class="text-xl font-bold mb-4">Novo Fornecedor</h3><input id="in-nome" class="w-full p-3 bg-zinc-800 mb-4 rounded" placeholder="Nome"><button onclick="saveItem('suppliers')" class="w-full bg-brand-yellow py-3 rounded font-bold text-zinc-950">Salvar</button>`;
+            }
+        }
+
+        function saveItem(type) {
+            if (type === 'orders') db.orders.push({ id: Math.floor(Math.random() * 9000) + 1000, cliente: document.getElementById('in-cliente').value, aparelho: document.getElementById('in-aparelho').value, valor: document.getElementById('in-valor').value, status: 'Aguardando' });
+            else if (type === 'stock') db.stock.push({ nome: document.getElementById('in-nome').value, qtd: document.getElementById('in-qtd').value, valor: document.getElementById('in-valor').value });
+            else if (type === 'clients') db.clients.push({ nome: document.getElementById('in-nome').value, telefone: document.getElementById('in-tel').value });
+            else if (type === 'suppliers') db.suppliers.push({ nome: document.getElementById('in-nome').value });
+            saveDB(); closeModal(); renderView(type === 'orders' ? 'orders' : type === 'stock' ? 'stock' : type === 'clients' ? 'clients' : 'suppliers');
+        }
+
+        function deleteItem(type, idx) { db[type].splice(idx, 1); saveDB(); renderView(type); }
+    </script>
+</body>
+
+</html>

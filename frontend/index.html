@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infomax - Assistência Técnica Especializada em Mogi Guaçu</title>
+    <meta name="description"
+        content="Assistência Técnica e Manutenção de Notebooks, Celulares e Computadores em Mogi Guaçu. Conserto rápido e orçamento grátis.">
+
+    <!-- SEO Local -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "Infomax",
+      "image": "https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?ixlib=rb-4.0.3",
+      "telephone": "+551938181763",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Praça Cândido Rondon, 30",
+        "addressLocality": "Mogi Guaçu",
+        "addressRegion": "SP",
+        "postalCode": "13840-026",
+        "addressCountry": "BR"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": -22.373031,
+        "longitude": -46.945037
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "reviewCount": "168"
+      }
+    }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@500;700;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            yellow: '#ffbb00',
+                            yellowDark: '#e6a800',
+                            darkBg: '#111111',
+                            cardBg: '#1a1a1a',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        title: ['Poppins', 'sans-serif'],
+                    },
+                    animation: {
+                        'blob': 'blob 7s infinite',
+                        'scroll': 'scroll 30s linear infinite',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        scroll: {
+                            '0%': { transform: 'translateX(0)' },
+                            '100%': { transform: 'translateX(calc(-250px * 5))' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #111111;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #111111;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #ffbb00;
+            border-radius: 10px;
+        }
+
+        .glass {
+            background: rgba(26, 26, 26, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .service-card {
+            transition: all 0.3s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px -10px rgba(255, 187, 0, 0.3);
+            border-color: rgba(255, 187, 0, 0.5);
+        }
+
+        /* Slider Antes/Depois */
+        .slider-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            overflow: hidden;
+            border-radius: 1rem;
+        }
+
+        .slider-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .slider-before {
+            width: 50%;
+            z-index: 2;
+            border-right: 4px solid #ffbb00;
+        }
+
+        .slider-handle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background: #ffbb00;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3;
+            cursor: ew-resize;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Brand Ticker */
+        .ticker-slider {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 20px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .ticker-slide-track {
+            display: flex;
+            width: calc(250px * 10);
+            animation: scroll 30s linear infinite;
+        }
+
+        .ticker-slide {
+            width: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.5;
+            transition: opacity 0.3s;
+        }
+
+        .ticker-slide:hover {
+            opacity: 1;
+        }
+
+        .typing-cursor::after {
+            content: '|';
+            animation: blink 1s step-end infinite;
+            color: #ffbb00;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+
+        /* FAQ */
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease;
+        }
+
+        .faq-answer.open {
+            max-height: 200px;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+
+        .faq-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .faq-icon.open {
+            transform: rotate(180deg);
+            color: #ffbb00;
+        }
+    </style>
+</head>
+
+<body class="antialiased">
+
+    <header class="fixed w-full z-50 glass border-b border-white/5 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer" onclick="window.scrollTo(0,0)">
+                    <div
+                        class="w-10 h-10 bg-brand-yellow rounded-lg flex items-center justify-center text-brand-darkBg font-black text-xl">
+                        iM
+                    </div>
+                    <span class="font-title font-bold text-2xl tracking-tight">INFOMAX</span>
+                </div>
+
+                <nav class="hidden md:flex space-x-8 items-center">
+                    <a href="#servicos"
+                        class="text-white/80 hover:text-brand-yellow transition-colors text-sm font-medium">Serviços</a>
+                    <a href="#simulador"
+                        class="text-white/80 hover:text-brand-yellow transition-colors text-sm font-medium">Orçamento</a>
+                    <a href="#rastreio-os"
+                        class="text-white/80 hover:text-brand-yellow transition-colors text-sm font-medium">Acompanhar
+                        OS</a>
+                    <a href="#avaliacoes"
+                        class="text-white/80 hover:text-brand-yellow transition-colors text-sm font-medium">Avaliações</a>
+                    <a href="#contato"
+                        class="text-white/80 hover:text-brand-yellow transition-colors text-sm font-medium">Contato</a>
+
+                    <a href="https://wa.me/5519998344529?text=Olá%20Infomax,%20vim%20pelo%20site%20e%20preciso%20de%20ajuda!"
+                        target="_blank"
+                        class="bg-brand-yellow hover:bg-brand-yellowDark text-brand-darkBg px-6 py-2.5 rounded-full font-bold transition-all transform hover:scale-105">
+                        Chamar no Zap
+                    </a>
+                </nav>
+
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-white hover:text-brand-yellow focus:outline-none">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menu Mobile -->
+        <div id="mobile-menu"
+            class="hidden md:hidden bg-brand-darkBg border-b border-white/10 absolute w-full shadow-2xl">
+            <div class="px-4 pt-2 pb-6 space-y-1">
+                <a href="#servicos"
+                    class="block px-3 py-3 rounded-md text-base font-medium text-white/80 hover:text-brand-yellow hover:bg-white/5">Serviços</a>
+                <a href="#simulador"
+                    class="block px-3 py-3 rounded-md text-base font-medium text-white/80 hover:text-brand-yellow hover:bg-white/5">Simular
+                    Orçamento</a>
+                <a href="#rastreio-os"
+                    class="block px-3 py-3 rounded-md text-base font-medium text-white/80 hover:text-brand-yellow hover:bg-white/5">Acompanhar
+                    OS</a>
+                <a href="#avaliacoes"
+                    class="block px-3 py-3 rounded-md text-base font-medium text-white/80 hover:text-brand-yellow hover:bg-white/5">Avaliações</a>
+                <a href="#contato"
+                    class="block px-3 py-3 rounded-md text-base font-medium text-white/80 hover:text-brand-yellow hover:bg-white/5">Contato</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="relative min-h-screen flex items-center pt-20 overflow-hidden">
+        <!-- Blobs decorativos de fundo -->
+        <div
+            class="absolute top-0 -left-4 w-72 h-72 bg-brand-yellow rounded-full mix-blend-multiply filter blur-[128px] opacity-20 animate-blob">
+        </div>
+        <div
+            class="absolute top-0 -right-4 w-72 h-72 bg-blue-500 rounded-full mix-blend-multiply filter blur-[128px] opacity-20 animate-blob animation-delay-2000">
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full py-12 md:py-0">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div class="text-center md:text-left reveal active">
+                    <div
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-yellow/10 border border-brand-yellow/20 text-brand-yellow mb-6 text-sm font-semibold">
+                        <span class="w-2 h-2 rounded-full bg-brand-yellow animate-pulse"></span>
+                        A Maior de Mogi Guaçu e Região
+                    </div>
+
+                    <h1 class="text-4xl md:text-6xl font-black font-title leading-tight mb-6">
+                        Deixamos <br />
+                        <span id="typing-text"
+                            class="text-transparent bg-clip-text bg-gradient-to-r from-brand-yellow to-yellow-200 typing-cursor">Seu
+                            Smartphone</span><br />
+                        novo de novo.
+                    </h1>
+
+                    <p class="text-lg text-white/70 mb-8 max-w-lg mx-auto md:mx-0">
+                        Assistência técnica especializada, transparente e rápida. Do conserto da placa-mãe à troca de
+                        tela, resolvemos o seu problema com garantia.
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                        <a href="https://wa.me/5519998344529?text=Olá%20Infomax,%20preciso%20de%20um%20orçamento%20para%20meu%20aparelho."
+                            target="_blank"
+                            class="bg-brand-yellow hover:bg-brand-yellowDark text-brand-darkBg font-bold px-8 py-4 rounded-xl transition-all shadow-[0_0_20px_rgba(255,187,0,0.3)] flex items-center justify-center gap-2 text-lg transform hover:-translate-y-1">
+                            <i class="fa-brands fa-whatsapp text-2xl"></i> Fazer Orçamento
+                        </a>
+                        <a href="#simulador"
+                            class="bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold px-8 py-4 rounded-xl transition-all flex items-center justify-center text-lg transform hover:-translate-y-1">
+                            Simular Preço
+                        </a>
+                    </div>
+
+                    <div class="mt-8 flex items-center justify-center md:justify-start gap-4 text-sm text-white/50">
+                        <div class="flex -space-x-2">
+                            <img class="w-8 h-8 rounded-full border-2 border-brand-darkBg"
+                                src="https://i.pravatar.cc/100?img=11" alt="Cliente">
+                            <img class="w-8 h-8 rounded-full border-2 border-brand-darkBg"
+                                src="https://i.pravatar.cc/100?img=12" alt="Cliente">
+                            <img class="w-8 h-8 rounded-full border-2 border-brand-darkBg"
+                                src="https://i.pravatar.cc/100?img=13" alt="Cliente">
+                        </div>
+                        <p>Mais de <strong class="text-white">5.000+</strong> clientes satisfeitos</p>
+                    </div>
+                </div>
+
+                <div class="relative reveal active hidden md:block">
+                    <div
+                        class="absolute inset-0 border-2 border-brand-yellow/20 rounded-3xl transform translate-x-4 translate-y-4">
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                        alt="Técnico consertando placa"
+                        class="rounded-3xl relative z-10 shadow-2xl object-cover h-[500px] w-full filter brightness-90">
+
+                    <div
+                        class="absolute -left-8 top-1/4 glass p-4 rounded-2xl border border-white/10 shadow-xl z-20 flex items-center gap-4 animate-[bounce_4s_infinite]">
+                        <div
+                            class="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center text-green-500 text-xl">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-white/60 uppercase font-bold tracking-wider">Garantia</p>
+                            <p class="font-bold text-white">Serviço Certificado</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="ticker-slider">
+        <div class="ticker-slide-track">
+            <div class="ticker-slide"><i class="fa-brands fa-apple text-4xl text-white"></i></div>
+            <div class="ticker-slide"><i class="fa-brands fa-windows text-4xl text-blue-400"></i></div>
+            <div class="ticker-slide"><span class="text-2xl font-black text-white tracking-widest">SAMSUNG</span></div>
+            <div class="ticker-slide"><span class="text-2xl font-bold text-blue-500">DELL</span></div>
+            <div class="ticker-slide"><span class="text-2xl font-bold text-red-500 italic">Lenovo</span></div>
+            <!-- Duplicado para loop infinito -->
+            <div class="ticker-slide"><i class="fa-brands fa-apple text-4xl text-white"></i></div>
+            <div class="ticker-slide"><i class="fa-brands fa-windows text-4xl text-blue-400"></i></div>
+            <div class="ticker-slide"><span class="text-2xl font-black text-white tracking-widest">SAMSUNG</span></div>
+            <div class="ticker-slide"><span class="text-2xl font-bold text-blue-500">DELL</span></div>
+            <div class="ticker-slide"><span class="text-2xl font-bold text-red-500 italic">Lenovo</span></div>
+        </div>
+    </div>
+
+    <section id="servicos" class="py-20 bg-brand-cardBg relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-3xl md:text-5xl font-black font-title text-white mb-4">Nossos Serviços</h2>
+                <p class="text-white/60 text-lg max-w-2xl mx-auto">Especialistas em resolver os problemas que os outros
+                    condenam. Soluções definitivas para a sua tecnologia.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 reveal delay-100">
+                <div
+                    class="service-card bg-brand-darkBg p-8 rounded-2xl border border-white/5 relative overflow-hidden group">
+                    <div
+                        class="absolute inset-0 bg-brand-yellow/5 transform scale-0 group-hover:scale-100 transition-transform duration-500 rounded-2xl">
+                    </div>
+                    <i class="fa-solid fa-laptop text-4xl text-brand-yellow mb-6 relative z-10"></i>
+                    <h3 class="text-xl font-bold text-white mb-3 relative z-10">Notebooks & PCs</h3>
+                    <p class="text-white/60 text-sm relative z-10">Manutenção preventiva, formatação, upgrade de SSD e
+                        memória, reparo de placa-mãe.</p>
+                </div>
+                <div
+                    class="service-card bg-brand-darkBg p-8 rounded-2xl border border-white/5 relative overflow-hidden group">
+                    <div
+                        class="absolute inset-0 bg-brand-yellow/5 transform scale-0 group-hover:scale-100 transition-transform duration-500 rounded-2xl">
+                    </div>
+                    <i class="fa-solid fa-mobile-screen text-4xl text-brand-yellow mb-6 relative z-10"></i>
+                    <h3 class="text-xl font-bold text-white mb-3 relative z-10">Smartphones</h3>
+                    <p class="text-white/60 text-sm relative z-10">Troca de tela, bateria viciada, conector de carga e
+                        banho químico para oxidação.</p>
+                </div>
+                <div
+                    class="service-card bg-brand-darkBg p-8 rounded-2xl border border-white/5 relative overflow-hidden group">
+                    <div
+                        class="absolute inset-0 bg-brand-yellow/5 transform scale-0 group-hover:scale-100 transition-transform duration-500 rounded-2xl">
+                    </div>
+                    <i class="fa-solid fa-headphones text-4xl text-brand-yellow mb-6 relative z-10"></i>
+                    <h3 class="text-xl font-bold text-white mb-3 relative z-10">Acessórios</h3>
+                    <p class="text-white/60 text-sm relative z-10">Venda de cabos, carregadores homologados, mouses,
+                        teclados e películas de proteção.</p>
+                </div>
+                <div
+                    class="service-card bg-brand-darkBg p-8 rounded-2xl border border-white/5 relative overflow-hidden group">
+                    <div
+                        class="absolute inset-0 bg-brand-yellow/5 transform scale-0 group-hover:scale-100 transition-transform duration-500 rounded-2xl">
+                    </div>
+                    <i class="fa-solid fa-microchip text-4xl text-brand-yellow mb-6 relative z-10"></i>
+                    <h3 class="text-xl font-bold text-white mb-3 relative z-10">Sistema & Software</h3>
+                    <ul class="text-white/60 text-sm relative z-10 space-y-2 mt-4">
+                        <li><i class="fa-solid fa-rotate text-brand-yellow mr-2"></i>Atualização de Sistema</li>
+                        <li><i class="fa-solid fa-unlock-keyhole text-brand-yellow mr-2"></i>Desbloqueio de Bootloader
+                        </li>
+                        <li><i class="fa-solid fa-database text-brand-yellow mr-2"></i>Recuperação de Dados</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="simulador" class="py-20 bg-brand-darkBg border-t border-white/5">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div
+                class="glass p-8 md:p-12 rounded-3xl border border-brand-yellow/20 shadow-[0_0_50px_rgba(255,187,0,0.05)] reveal">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-black font-title text-white mb-2">Simulador de Orçamento</h2>
+                    <p class="text-white/60">Selecione o problema para adiantar seu atendimento</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div>
+                        <label class="block text-sm font-medium text-white/80 mb-2">Qual é o aparelho?</label>
+                        <input type="text" id="device-type" placeholder="Ex: iPhone 11, Notebook Dell..."
+                            class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand-yellow transition-colors">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-white/80 mb-2">O que está acontecendo?</label>
+                        <select id="device-issue" onchange="simulateLoading()"
+                            class="w-full bg-white text-black border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:ring-4 focus:ring-brand-yellow/50 transition-all font-medium cursor-pointer">
+                            <option value="">Selecione um sintoma...</option>
+                            <option value="Tela Quebrada / Trincada">Tela Quebrada / Trincada</option>
+                            <option value="Bateria descarregando rápido">Bateria descarregando rápido</option>
+                            <option value="Não liga / Não carrega">Não liga / Não carrega</option>
+                            <option value="Aparelho lento / Travando">Aparelho lento / Travando</option>
+                            <option value="Falta de Atualização">Falta de Atualização de Sistema</option>
+                            <option value="Desbloqueio de Bootloader">Desbloqueio de Bootloader (Avançado)</option>
+                            <option value="Caiu na água">Caiu na água</option>
+                            <option value="Outro problema">Outro problema</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="sim-loader" class="hidden justify-center items-center py-8">
+                    <div class="w-10 h-10 border-4 border-white/10 border-t-brand-yellow rounded-full animate-spin">
+                    </div>
+                    <span class="ml-4 text-white/60 animate-pulse">Analisando serviços...</span>
+                </div>
+
+                <div id="results-box" class="hidden bg-white/5 rounded-xl p-6 border border-white/10 text-center">
+                    <h4 class="text-brand-yellow font-bold mb-2"><i
+                            class="fa-solid fa-check-circle mr-2"></i>Diagnóstico Pré-aprovado</h4>
+                    <p class="text-white/80 mb-6 text-sm">Temos especialistas prontos para resolver esse problema! Envie
+                        os dados para nossa equipe e receba o valor exato agora.</p>
+                    <button onclick="sendDiagnosticWhatsApp()"
+                        class="bg-brand-yellow hover:bg-brand-yellowDark text-brand-darkBg font-bold px-8 py-3 rounded-xl transition-all shadow-lg w-full md:w-auto">
+                        <i class="fa-brands fa-whatsapp mr-2"></i> Receber Valor no WhatsApp
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="rastreio-os" class="py-16 bg-brand-yellow text-brand-darkBg border-y border-brand-yellowDark">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center reveal">
+            <h2 class="text-3xl font-black font-title mb-4">Acompanhe seu Reparo</h2>
+            <p class="text-brand-darkBg/80 mb-8 max-w-lg mx-auto font-medium">Deixou seu aparelho conosco? Digite o
+                número da sua OS ou CPF para saber o status em tempo real.</p>
+
+            <div class="flex flex-col sm:flex-row max-w-lg mx-auto gap-2">
+                <input type="text" id="os-input" placeholder="Nº da OS ou CPF"
+                    class="flex-1 bg-white border-2 border-transparent focus:border-black rounded-xl px-6 py-4 text-black font-bold outline-none transition-all placeholder-gray-400 shadow-inner">
+                <button onclick="checkOS()"
+                    class="bg-black hover:bg-gray-900 text-white font-bold px-8 py-4 rounded-xl transition-all shadow-xl flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-magnifying-glass"></i> Consultar
+                </button>
+            </div>
+
+            <div id="os-loader" class="hidden justify-center items-center py-4 mt-4">
+                <div class="w-6 h-6 border-4 border-black/20 border-t-black rounded-full animate-spin"></div>
+                <span class="ml-3 font-bold animate-pulse text-sm">Buscando no sistema da loja...</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-20 bg-brand-darkBg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12 reveal">
+                <h2 class="text-3xl font-black font-title text-white mb-4">A Mágica Acontece Aqui</h2>
+                <p class="text-white/60">Arraste para ver o resultado do nosso trabalho.</p>
+            </div>
+            <div class="max-w-3xl mx-auto reveal">
+                <div class="slider-container" id="ba-slider">
+                    <img src="https://images.unsplash.com/photo-1512314889357-e157c22f938d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                        alt="Depois" class="slider-img filter brightness-110">
+                    <div class="slider-before absolute top-0 left-0 h-full overflow-hidden" id="ba-before">
+                        <img src="https://images.unsplash.com/photo-1592890288564-76628a30a657?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                            alt="Antes" class="slider-img filter grayscale sepia">
+                    </div>
+                    <div class="slider-handle" id="ba-handle">
+                        <i class="fa-solid fa-arrows-left-right text-brand-darkBg text-sm"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="avaliacoes" class="py-20 bg-brand-cardBg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-12 reveal">
+                <div>
+                    <h2 class="text-3xl font-black font-title text-white mb-2">Quem conhece, confia.</h2>
+                    <p class="text-white/60">Veja o que dizem os clientes de Mogi Guaçu</p>
+                </div>
+                <div class="mt-4 md:mt-0 text-right">
+                    <div class="text-brand-yellow text-2xl mb-1">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                            class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                            class="fa-solid fa-star"></i>
+                    </div>
+                    <p class="text-white font-bold text-xl">4.8 / 5 <span class="text-white/50 text-sm font-normal">no
+                            Google Maps</span></p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 reveal delay-100">
+                <div
+                    class="bg-brand-darkBg p-6 rounded-2xl border border-white/5 hover:border-brand-yellow/30 transition-colors">
+                    <p class="text-white/80 text-sm italic mb-4">"Loja com bastante variedade de produtos e técnicos
+                        capacitados, recomendo. Serviço de primeira linha."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center font-bold">L
+                        </div>
+                        <div>
+                            <p class="font-bold text-white text-sm">Luciane Alves</p>
+                            <p class="text-xs text-white/40">Avaliação no Google</p>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="bg-brand-darkBg p-6 rounded-2xl border border-white/5 hover:border-brand-yellow/30 transition-colors">
+                    <p class="text-white/80 text-sm italic mb-4">"Meu celular estava cheio de vírus, travando, levei até
+                        eles e deixaram o celular top, funcionando tudo certinho, são competentes."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center font-bold">J
+                        </div>
+                        <div>
+                            <p class="font-bold text-white text-sm">José Vieira</p>
+                            <p class="text-xs text-white/40">Avaliação no Google</p>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="bg-brand-darkBg p-6 rounded-2xl border border-white/5 hover:border-brand-yellow/30 transition-colors">
+                    <p class="text-white/80 text-sm italic mb-4">"Loja excelente, atendimento de 1°, toda vez que
+                        preciso de assistência para meu celular ou notebook me atendem com eficiência."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center font-bold">C
+                        </div>
+                        <div>
+                            <p class="font-bold text-white text-sm">Cerly Sances</p>
+                            <p class="text-xs text-white/40">Avaliação no Google</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq" class="py-20 bg-brand-darkBg border-t border-white/5">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 reveal">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-black font-title text-white mb-4">Dúvidas Frequentes</h2>
+            </div>
+            <div class="space-y-4">
+                <div class="bg-white/5 rounded-xl border border-white/10 overflow-hidden cursor-pointer"
+                    onclick="toggleFaq(this)">
+                    <div class="px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors">
+                        <h4 class="font-bold text-white">Vocês cobram para fazer o orçamento?</h4>
+                        <i class="fa-solid fa-chevron-down faq-icon text-white/50"></i>
+                    </div>
+                    <div class="faq-answer px-6 bg-black/50 text-white/70 text-sm">
+                        Não! Nosso orçamento é 100% gratuito e sem compromisso. Você traz o aparelho, nós avaliamos e
+                        passamos o valor. Você só paga se aprovar o serviço.
+                    </div>
+                </div>
+                <div class="bg-white/5 rounded-xl border border-white/10 overflow-hidden cursor-pointer"
+                    onclick="toggleFaq(this)">
+                    <div class="px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors">
+                        <h4 class="font-bold text-white">Vou perder meus dados e fotos no conserto?</h4>
+                        <i class="fa-solid fa-chevron-down faq-icon text-white/50"></i>
+                    </div>
+                    <div class="faq-answer px-6 bg-black/50 text-white/70 text-sm">
+                        Na grande maioria dos reparos físicos (como troca de tela e bateria), seus dados não são
+                        afetados. Se for necessário formatação ou serviço de software, sempre avisamos antes e
+                        oferecemos o backup.
+                    </div>
+                </div>
+                <div class="bg-white/5 rounded-xl border border-white/10 overflow-hidden cursor-pointer"
+                    onclick="toggleFaq(this)">
+                    <div class="px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors">
+                        <h4 class="font-bold text-white">Qual é o prazo de garantia?</h4>
+                        <i class="fa-solid fa-chevron-down faq-icon text-white/50"></i>
+                    </div>
+                    <div class="faq-answer px-6 bg-black/50 text-white/70 text-sm">
+                        Oferecemos garantia legal de 90 dias para todos os nossos serviços e peças substituídas,
+                        garantindo sua tranquilidade após sair da loja.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contato" class="py-20 bg-brand-darkBg relative border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div class="reveal">
+                    <div class="mb-8">
+                        <h2 class="text-3xl font-black font-title text-white mb-4">Visite nossa Loja</h2>
+                        <p class="text-white/60">Estamos localizados no coração de Mogi Guaçu, prontos para te atender.
+                        </p>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="w-12 h-12 rounded-full bg-brand-yellow/10 flex items-center justify-center text-brand-yellow shrink-0 text-xl border border-brand-yellow/20">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-lg">Endereço</h4>
+                                <p class="text-white/60">Praça Cândido Rondon, 30 - Centro<br>Mogi Guaçu - SP, 13840-026
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="w-12 h-12 rounded-full bg-brand-yellow/10 flex items-center justify-center text-brand-yellow shrink-0 text-xl border border-brand-yellow/20">
+                                <i class="fa-solid fa-clock"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-lg flex items-center gap-3">
+                                    Horário
+                                    <span id="store-status"
+                                        class="text-[10px] uppercase px-2 py-0.5 rounded-full border tracking-widest font-bold">Verificando...</span>
+                                </h4>
+                                <p class="text-white/60 mt-1">Segunda a Sexta: 09:00 às 18:00</p>
+                                <p class="text-white/60">Sábado: 09:00 às 13:00</p>
+                                <p class="text-white/40 text-sm">Domingo: Fechado</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4">
+                            <div
+                                class="w-12 h-12 rounded-full bg-brand-yellow/10 flex items-center justify-center text-brand-yellow shrink-0 text-xl border border-brand-yellow/20">
+                                <i class="fa-solid fa-phone"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-lg">Contato</h4>
+                                <p class="text-white/60">(19) 3818-1763</p>
+                                <p class="text-brand-yellow font-bold">(19) 99834-4529 <i
+                                        class="fa-brands fa-whatsapp ml-1"></i></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="h-[400px] rounded-3xl overflow-hidden border border-white/10 reveal glass shadow-2xl">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3686.0792376914564!2d-46.94503732391037!3d-22.37303107963365!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94c85117498263eb%3A0xe54d6f4614ff79ee!2sInfomax%20-%20Venda%2C%20Assist%C3%AAncia%20T%C3%A9cnica%20e%20Manuten%C3%A7%C3%A3o%20de%20Notebook%2C%20Celular%20e%20Computador!5e0!3m2!1spt-BR!2sbr!4v1718930000000!5m2!1spt-BR!2sbr"
+                        width="100%" height="100%" style="border:0; filter: invert(90%) hue-rotate(180deg);"
+                        allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-black py-8 border-t border-white/5 text-center">
+        <p class="text-white/40 text-sm">© 2024 Infomax. Todos os direitos reservados.</p>
+        <p class="text-white/20 text-xs mt-2">Desenvolvido com tecnologia e foco em conversão.</p>
+    </footer>
+
+    <!-- Botão WhatsApp Flutuante -->
+    <a href="https://wa.me/5519998344529?text=Olá%20Infomax,%20vim%20pelo%20site!" target="_blank"
+        class="fixed bottom-6 right-6 z-50 bg-[#25D366] text-white w-16 h-16 rounded-full flex items-center justify-center text-3xl shadow-[0_4px_14px_0_rgba(37,211,102,0.39)] hover:scale-110 transition-transform animate-bounce">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <!-- Pop-up Exit Intent -->
+    <div id="exit-popup"
+        class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/80 backdrop-blur-sm px-4">
+        <div class="bg-brand-darkBg border-2 border-brand-yellow rounded-3xl p-8 max-w-md w-full relative transform scale-95 opacity-0 transition-all duration-300"
+            id="exit-popup-content">
+            <button onclick="closePopup()" class="absolute top-4 right-4 text-white/50 hover:text-white text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="text-center">
+                <div
+                    class="w-16 h-16 bg-brand-yellow/20 text-brand-yellow rounded-full flex items-center justify-center mx-auto mb-4 text-3xl animate-bounce">
+                    <i class="fa-solid fa-gift"></i>
+                </div>
+                <h3 class="text-2xl font-black font-title text-white mb-2">Espera aí! Não vá ainda...</h3>
+                <p class="text-white/70 mb-6 text-sm">
+                    Ganhe <span class="text-brand-yellow font-bold text-lg">10% DE DESCONTO</span> na mão de obra do seu
+                    primeiro conserto com a gente!
+                </p>
+                <a href="https://wa.me/5519998344529?text=Olá!%20Eu%20estava%20no%20site%20e%20ganhei%20o%20cupom%20de%2010%25%20de%20desconto.%20Quero%20fazer%20um%20orçamento!"
+                    target="_blank" onclick="closePopup()"
+                    class="block w-full bg-[#25D366] hover:bg-green-600 text-white font-bold px-6 py-4 rounded-xl transition-all shadow-[0_0_20px_rgba(37,211,102,0.3)] mb-3 text-lg">
+                    <i class="fa-brands fa-whatsapp mr-2"></i> Pegar meu Desconto
+                </a>
+                <button onclick="closePopup()" class="text-white/40 hover:text-white text-sm underline">
+                    Não, obrigado. Prefiro pagar o valor normal.
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Menu Mobile
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+        btn.addEventListener('click', () => menu.classList.toggle('hidden'));
+        menu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => menu.classList.add('hidden'));
+        });
+
+        // Typing Effect
+        const textArray = ["Seu Smartphone", "Seu Notebook", "Seu Computador", "Seu Apple"];
+        let textIndex = 0; let charIndex = 0;
+        const typingText = document.getElementById("typing-text");
+
+        function type() {
+            if (charIndex < textArray[textIndex].length) {
+                typingText.textContent += textArray[textIndex].charAt(charIndex);
+                charIndex++;
+                setTimeout(type, 100);
+            } else {
+                setTimeout(erase, 2000);
+            }
+        }
+        function erase() {
+            if (charIndex > 0) {
+                typingText.textContent = textArray[textIndex].substring(0, charIndex - 1);
+                charIndex--;
+                setTimeout(erase, 50);
+            } else {
+                textIndex = (textIndex + 1) % textArray.length;
+                setTimeout(type, 500);
+            }
+        }
+        document.addEventListener("DOMContentLoaded", () => { setTimeout(type, 1000); });
+
+        // Scroll Background & Reveal
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('bg-black/90'); nav.classList.remove('glass');
+            } else {
+                nav.classList.remove('bg-black/90'); nav.classList.add('glass');
+            }
+
+            document.querySelectorAll('.reveal').forEach(reveal => {
+                if (reveal.getBoundingClientRect().top < window.innerHeight - 100) {
+                    reveal.classList.add('active');
+                }
+            });
+        });
+
+        // FAQ Toggle
+        function toggleFaq(element) {
+            const answer = element.querySelector('.faq-answer');
+            const icon = element.querySelector('.faq-icon');
+            answer.classList.toggle('open');
+            icon.classList.toggle('open');
+        }
+
+        // Slider Antes/Depois
+        const container = document.getElementById('ba-slider');
+        const beforeImg = document.getElementById('ba-before');
+        const handle = document.getElementById('ba-handle');
+
+        function moveSlider(e) {
+            const rect = container.getBoundingClientRect();
+            let x = (e.clientX || e.touches[0].clientX) - rect.left;
+            x = Math.max(0, Math.min(x, rect.width));
+            const percent = (x / rect.width) * 100;
+            beforeImg.style.width = percent + '%';
+            handle.style.left = percent + '%';
+        }
+        container.addEventListener('mousemove', moveSlider);
+        container.addEventListener('touchmove', moveSlider);
+
+        // Simulador de Orçamento
+        function simulateLoading() {
+            const issue = document.getElementById('device-issue').value;
+            const loader = document.getElementById('sim-loader');
+            const results = document.getElementById('results-box');
+
+            if (issue) {
+                results.classList.add('hidden');
+                loader.classList.remove('hidden'); loader.classList.add('flex');
+                setTimeout(() => {
+                    loader.classList.add('hidden'); loader.classList.remove('flex');
+                    results.classList.remove('hidden');
+                }, 800);
+            }
+        }
+
+        function sendDiagnosticWhatsApp() {
+            const device = document.getElementById('device-type').value || "Não especificado";
+            const issue = document.getElementById('device-issue').value;
+            if (!issue) { alert("Por favor, selecione um problema para continuar."); return; }
+            const text = `*Orçamento pelo Site*\n\nOlá Equipe Infomax! 👋\nGostaria de um orçamento para o meu aparelho.\n\n📱 *Aparelho:* ${device}\n⚠️ *Problema:* ${issue}\n\nPodem me ajudar?`;
+            window.open(`https://wa.me/5519998344529?text=${encodeURIComponent(text)}`, '_blank');
+        }
+
+        // Rastreio de OS
+        function checkOS() {
+            const inputEl = document.getElementById('os-input');
+            const inputVal = inputEl.value.trim();
+            const loader = document.getElementById('os-loader');
+
+            if (!inputVal) {
+                inputEl.classList.add('border-red-500', 'ring-red-500/20', 'ring-2');
+                setTimeout(() => inputEl.classList.remove('border-red-500', 'ring-red-500/20', 'ring-2'), 1500);
+                return;
+            }
+
+            loader.classList.remove('hidden'); loader.classList.add('flex');
+            setTimeout(() => {
+                loader.classList.add('hidden'); loader.classList.remove('flex');
+                const text = `*Consulta de Status - Pelo Site*\n\nOlá Equipe Infomax! 👋\nGostaria de saber o andamento do meu aparelho.\n\n📋 *Código / CPF:* ${inputVal}`;
+                window.open(`https://wa.me/5519998344529?text=${encodeURIComponent(text)}`, '_blank');
+                inputEl.value = '';
+            }, 1500);
+        }
+
+        // Status de Loja
+        function checkStoreStatus() {
+            const statusBadge = document.getElementById('store-status');
+            const brTime = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Sao_Paulo" }));
+            const day = brTime.getDay(); const hour = brTime.getHours();
+            let isOpen = false; let nextOpen = "";
+
+            if (day >= 1 && day <= 5) {
+                if (hour >= 9 && hour < 18) isOpen = true;
+                else if (hour < 9) nextOpen = "Abre hoje às 09h";
+                else nextOpen = "Abre amanhã às 09h";
+            } else if (day === 6) {
+                if (hour >= 9 && hour < 13) isOpen = true;
+                else if (hour < 9) nextOpen = "Abre hoje às 09h";
+                else nextOpen = "Abre segunda às 09h";
+            } else { nextOpen = "Abre segunda às 09h"; }
+
+            if (isOpen) {
+                statusBadge.innerHTML = '<span class="inline-block w-2 h-2 bg-green-500 rounded-full animate-pulse mr-1"></span> Aberto Agora';
+                statusBadge.className = "text-[10px] uppercase px-2 py-0.5 rounded-full border tracking-widest font-bold border-green-500/50 text-green-500 bg-green-500/10";
+            } else {
+                statusBadge.innerHTML = '<span class="inline-block w-2 h-2 bg-red-500 rounded-full mr-1"></span> Fechado (' + nextOpen + ')';
+                statusBadge.className = "text-[10px] uppercase px-2 py-0.5 rounded-full border tracking-widest font-bold border-red-500/50 text-red-500 bg-red-500/10";
+            }
+        }
+        checkStoreStatus(); setInterval(checkStoreStatus, 60000);
+
+        // Pop-up Exit Intent
+        let popupShown = false;
+        const exitPopup = document.getElementById('exit-popup');
+        const exitPopupContent = document.getElementById('exit-popup-content');
+
+        document.addEventListener('mouseleave', (e) => {
+            if (e.clientY < 0 && !popupShown) showPopup();
+        });
+        setTimeout(() => { if (!popupShown && window.scrollY < 200) showPopup(); }, 20000);
+
+        function showPopup() {
+            popupShown = true;
+            exitPopup.classList.remove('hidden'); exitPopup.classList.add('flex');
+            setTimeout(() => {
+                exitPopupContent.classList.remove('scale-95', 'opacity-0');
+                exitPopupContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closePopup() {
+            exitPopupContent.classList.remove('scale-100', 'opacity-100');
+            exitPopupContent.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                exitPopup.classList.add('hidden'); exitPopup.classList.remove('flex');
+            }, 300);
+        }
+    </script>
+</body>
+
+</html>

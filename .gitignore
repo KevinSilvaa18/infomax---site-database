@@ -1,0 +1,16 @@
+# Arquivos de sistema
+.DS_Store
+Thumbs.db
+
+# Pastas de build do Java (Não subir)
+backend/target/
+backend/.gradle/
+backend/bin/
+backend/.settings/
+
+# Editor e IDE
+.vscode/
+.idea/
+
+# Outros
+node_modules/
